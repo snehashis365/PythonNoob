@@ -37,16 +37,16 @@ def fibonacci_term(term_count):
 
 
 def is_fibonacci(term_checked):
-    i = 1
-
-    while True:
-        term = fibonacci_term(i)
-        if term_checked == term:
-            return True
-        elif term_checked < term:
-            return False
-        else:
-            i += 1
+    present_term = 0
+    next_term = 1
+    while term_checked >= next_term:
+        temp = present_term + next_term
+        present_term = next_term
+        next_term = temp
+    if present_term == term_checked:
+        return True
+    else:
+        return False
 
 
 def main():  # Driver Method

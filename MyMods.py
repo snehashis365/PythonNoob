@@ -1,4 +1,4 @@
-class utils:
+class num_utils:
 
     def __init__(self):
         pass
@@ -20,30 +20,35 @@ class utils:
         return num % 2 != 0
 
     def factorial(self, num):
-        p=1
-        for x in range(1,num+1) :
-           p = p * x
+        p = 1
+        for x in range(1, num + 1):
+            p = p * x
         return p
 
     def nCr(self, n, r):
-        if r>0:
-            return int(self.factorial(n)/( self.factorial(r) * self.factorial(n - r) ) )
+        if r > 0:
+            return int(self.factorial(n) / (self.factorial(r) * self.factorial(n - r)))
         else:
             return 1
 
     def digit_sum(self, num):
         temp, s = num, 0
-        while temp>0:
-            s+= temp % 10
+        while temp > 0:
+            s += temp % 10
             temp = temp // 10
         return s
 
     def num_reverse(self, num):
         temp, r = num, 0
-        while temp>0:
+        while temp > 0:
             r = (r * 10) + (temp % 10)
             temp = temp // 10
         return r
+
+class list_utils:
+
+    def __init__(self):
+        pass
 
     def bubble_sort(self, arr):
         n = len(arr)
@@ -61,14 +66,14 @@ class utils:
         return arr
 
     def insertion_sort(self, arr):
-        n= len(arr)
-        for i in range(1,n):
+        n = len(arr)
+        for i in range(1, n):
 
             temp = arr[i]
             j = i - 1
             while j >= 0 and arr[j] > temp:
-                    arr[j + 1] = arr[j]
-                    j-= 1
+                arr[j + 1] = arr[j]
+                j -= 1
             arr[j + 1] = temp
 
         return arr

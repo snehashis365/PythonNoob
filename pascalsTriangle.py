@@ -1,5 +1,5 @@
-from MyMods import utils
-get=utils()
+from MyMods import num_utils
+get=num_utils()
 size=int(input("Enter Size: "))
 for i in range(size):
     for j in range(size-i):

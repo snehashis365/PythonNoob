@@ -1,6 +1,6 @@
-from MyMods import utils
+from MyMods import list_utils
 
-ob = utils()
+ob = list_utils()
 
 
 def main():
@@ -10,10 +10,12 @@ def main():
     for i in range(0, n):
         arr.append(int(input()))
         i += 1
-
-    # arr = ob.bubble_sort(arr)
+    isSorted =input("Is the list sorted(Y/N)?")
     item = int(input("Enter Search item: "))
-    i = ob.binary_search(arr, item, False)
+    if isSorted == "Y":
+        i = ob.binary_search(arr, item, True)
+    else:
+        i = ob.binary_search(arr, item, False)
     print("Printing....")
     if i >= 0:
         print(f"Found at {i}")
