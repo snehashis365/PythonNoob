@@ -74,6 +74,7 @@ def run(file_name):
 
 
 def main():
+    global EXECUTE, COMPILE, BUILD_MENU, SHOW_TIME, DEL_OBJ, SINGLE_FILE
     args = []
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hcrmtvdsiu",
@@ -124,7 +125,7 @@ def main():
                 if return_code > 0:
                     err_count += 1
             count += 1
-        print(f"Total: {count - 1}\nFailed: {err_count}\nSuccess: {count - err_count - 1}")
+        print(f"Total: {count}\nFailed: {err_count}\nSuccess: {count - err_count}")
 
 
 if __name__ == "__main__":
