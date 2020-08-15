@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 import sys
 import os
-import platform
 import getopt
 
 # Some variables declared are for future use
 VERSION = "0.8.15.2"
+OS = os.name
+CACHE_FOLDER = ".crun-cache/"
 COMPILE = False
 EXECUTE = True
 BUILD_MENU = False
@@ -55,27 +56,52 @@ def banner():  # Builds banner
 
 def compile_c(file_name):
     print(BLUE, end="")  # Setting color prior
-    if os.path.exists(file_name[:-2] + ".out"):
+    if os.path.exists(CACHE_FOLDER + file_name[:-2] + ".out"):
         print("Re-", end="")
     print(f"Compiling{NORMAL}->{file_name}\n")
-    return os.system("cc " + file_name + " -o " + file_name[:-2] + ".out -lm")
+    return os.system("cc " + file_name + " -o " + CACHE_FOLDER + file_name[:-2] + ".out -lm")
 
 
 def run(file_name):
     return_code = 0
-    if not os.path.exists(file_name[:-2] + ".out") or COMPILE:
+    if not os.path.exists(CACHE_FOLDER + file_name[:-2] + ".out") or COMPILE:
         return_code = compile_c(file_name)
     if return_code == 0:
         print(f"{LGREEN}Executing{NORMAL}->{file_name}\n")
-        os.system("./" + file_name[:-2] + ".out")
+        os.system("./" + CACHE_FOLDER + file_name[:-2] + ".out")
         print(f"\n{LGREEN}Done{NORMAL}\n")
     else:
         print("Compile error!")
 
 
+def build_submenu(file_name):
+    while True:
+        clear()
+        banner()
+        print(f"{LBLUE}Selected->{LGREEN}{file_name}{NORMAL}\n")
+        print("1. Run\n2. Compile\n")
+        if not SINGLE_FILE:
+            print("9. Return to main menu")
+        print("0. Exit")
+        try:
+            choice = int(input(" >> "))
+            if choice == 1:
+                run(file_name)
+            elif choice == 2:
+                compile_c(file_name)
+            elif choice == 9 and SINGLE_FILE:
+                break
+            else:
+                sys.exit()
+        except Exception as e:
+            print(e)
+            print(f"{RED}Wrong input!!{NORMAL}\nPlease Enter desired option {LGREEN}number{NORMAL}\n")
+        input("Screen will be cleared\nPress enter to continue...")
+
+
 def main():
     global EXECUTE, COMPILE, BUILD_MENU, SHOW_TIME, DEL_OBJ, SINGLE_FILE
-    args = []
+    # Handle options
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hcrmtvdsiu",
                                    ["help", "compile", "run", "menu", "time", "version", "cleanup", "super", "install",
@@ -94,8 +120,10 @@ def main():
             EXECUTE = True
         elif opt in ["-m", "--menu"]:
             BUILD_MENU = True
+            print(BUILD_MENU)
         elif opt in ["-t", "--time"]:
             SHOW_TIME = True
+            print(SHOW_TIME)
         elif opt in ["-v", "--version"]:
             print(f"cRun {VERSION}(py) by snehashis365")
             sys.exit()
@@ -111,11 +139,14 @@ def main():
             print("Call update function(Coming Soon)")
     # End of options handling
 
+    # Checking cache folder
+    if not os.path.exists(CACHE_FOLDER[:-1]):
+        os.mkdir(CACHE_FOLDER[:-1])
     banner()
     count = 0
     err_count = 0
-    if len(args) == 2:
-        pass
+    if len(args) == 1:
+        build_submenu(args[0])
     else:
         for arg in args:
             if EXECUTE:
@@ -125,6 +156,9 @@ def main():
                 if return_code > 0:
                     err_count += 1
             count += 1
+            # Delete object file after running
+            if DEL_OBJ:
+                os.system(f"rm {CACHE_FOLDER}{arg[:-2]}.out")
         print(f"Total: {count}\nFailed: {err_count}\nSuccess: {count - err_count}")
 
 
