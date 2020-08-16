@@ -11,7 +11,7 @@ COMPILE = False
 EXECUTE = True
 BUILD_MENU = False
 SINGLE_FILE = False
-DEL_OBJ = False
+CLEANUP = False
 SHOW_TIME = False
 
 # Color codes
@@ -47,7 +47,7 @@ def banner():  # Builds banner
     else:
         print(f"{LGREEN}Off{NORMAL}")
     print("Auto Cleanup : ", end="")
-    if DEL_OBJ:
+    if CLEANUP:
         print(f"{RED}On{NORMAL}")
     else:
         print(f"{LGREEN}Off{NORMAL}")
@@ -72,6 +72,8 @@ def run(file_name):
         print(f"\n{LGREEN}Done{NORMAL}\n")
     else:
         print("Compile error!")
+    if CLEANUP:
+        os.system(f"rm {CACHE_FOLDER}{file_name[:-2]}.out")
 
 
 def build_submenu(file_name):
@@ -134,7 +136,7 @@ def build_menu(file_list):
 
 
 def main():
-    global EXECUTE, COMPILE, BUILD_MENU, SHOW_TIME, DEL_OBJ, SINGLE_FILE
+    global EXECUTE, COMPILE, BUILD_MENU, SHOW_TIME, CLEANUP, SINGLE_FILE
     # Handle options
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hcrmtvdsiu",
@@ -162,7 +164,7 @@ def main():
             print(f"cRun {VERSION}(py) by snehashis365")
             sys.exit()
         elif opt in ["-d", "--cleanup"]:
-            DEL_OBJ = True
+            CLEANUP = True
         elif opt in ["-s", "--super"]:
             print("Attempting sudo")
             os.system(f"sudo {sys.argv[0]}")
@@ -205,9 +207,6 @@ def main():
                 if return_code > 0:
                     err_count += 1
             count += 1
-            # Delete object file after running
-            if DEL_OBJ:
-                os.system(f"rm {CACHE_FOLDER}{arg[:-2]}.out")
         print(f"Total: {count}\nFailed: {err_count}\nSuccess: {count - err_count}")
 
 
