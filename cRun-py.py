@@ -4,7 +4,7 @@ import os
 import getopt
 
 # Some variables declared are for future use
-VERSION = "0.8.15.2"
+VERSION = "0.8.15.20"
 OS = os.name
 CACHE_FOLDER = ".crun-cache/"
 COMPILE = False
@@ -84,19 +84,53 @@ def build_submenu(file_name):
             print("9. Return to main menu")
         print("0. Exit")
         try:
-            choice = int(input(" >> "))
+            choice = int(input(">> "))
             if choice == 1:
                 run(file_name)
             elif choice == 2:
                 compile_c(file_name)
-            elif choice == 9 and SINGLE_FILE:
+            elif choice == 9 and not SINGLE_FILE:
                 break
-            else:
+            elif choice == 0:
+                print("\nExiting...\n")
                 sys.exit()
+            else:
+                print("Wrong choice!!!")
         except Exception as e:
             print(e)
             print(f"{RED}Wrong input!!{NORMAL}\nPlease Enter desired option {LGREEN}number{NORMAL}\n")
         input("Screen will be cleared\nPress enter to continue...")
+
+
+def build_menu(file_list):
+    while True:
+        clear()
+        banner()
+        index = 1
+        # Generate menu from file list
+        for file in file_list:
+            print(f"{index}. ", end="")
+            if os.path.exists(CACHE_FOLDER + file[:-2] + ".out"):
+                print(LGREEN, end="")
+            else:
+                print(RED, end="")
+            print(f"{file}{NORMAL}")
+            index += 1
+        print("\n0. Exit\n")
+        try:
+            choice = int(input(">> "))
+            if choice == 0:
+                print("\nExiting...\n")
+                sys.exit()
+            elif 0 < choice <= index:
+                build_submenu(file_list[choice - 1])
+                print("Returned...")
+            else:
+                print("Invalid input try again")
+                input("Press enter to continue...")
+        except Exception as e:
+            print(e)
+            print(f"{RED}Wrong input!!{NORMAL}\nPlease Enter desired option {LGREEN}number{NORMAL}\n")
 
 
 def main():
@@ -146,7 +180,22 @@ def main():
     count = 0
     err_count = 0
     if len(args) == 1:
+        SINGLE_FILE = True
         build_submenu(args[0])
+    elif BUILD_MENU and len(args) > 1:
+        build_menu(args)
+    elif len(args) == 0:
+        directory_content, c_files = os.listdir(), []
+        for content in directory_content:
+            if content[-2:] == ".c":
+                c_files.append(content)
+        directory_content.clear()
+        if len(c_files) == 1:
+            build_submenu(c_files[0])
+        elif len(c_files) > 1:
+            build_menu(c_files)
+        else:
+            print("No .c files in current directory")
     else:
         for arg in args:
             if EXECUTE:
